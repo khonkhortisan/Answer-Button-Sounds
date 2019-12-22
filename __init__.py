@@ -7,10 +7,12 @@ import os
 from aqt.reviewer import Reviewer
 from anki.hooks import wrap
 from anki.sound import play, clearAudioQueue
-#don't let nextCard crash
+
+#don't let nextCard crash (I wish it would tell me when I'm missing includes)
 #from aqt.utils import (askUserDialog, downArrow, mungeQA,
 #                       qtMenuShortcutWorkaround, tooltip)
 from aqt.utils import askUserDialog
+from aqt.qt import * #QMessageBox
 
 
 #Toggle this variable if the nextCard function conflicts with another addon,
