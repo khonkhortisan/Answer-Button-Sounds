@@ -62,41 +62,41 @@ def answersound(self, ease):
 Reviewer._answerCard = wrap(Reviewer._answerCard, answersound, "before")
 
 
-#already cleared the audio queue, don't do it again and lose the sound effects.
-#but it delays the next card's sounds.
-def nextCard(self):
-    elapsed = self.mw.col.timeboxReached()
-    if elapsed:
-        part1 = ngettext("%d card studied in", "%d cards studied in", elapsed[1]) % elapsed[1]
-        mins = int(round(elapsed[0]/60))
-        part2 = ngettext("%s minute.", "%s minutes.", mins) % mins
-        fin = _("Finish")
-        diag = askUserDialog("%s %s" % (part1, part2),
-                         [_("Continue"), fin])
-        diag.setIcon(QMessageBox.Information)
-        if diag.run() == fin:
-            return self.mw.moveToState("deckBrowser")
-        self.mw.col.startTimebox()
-    if self.cardQueue:
-        # undone/edited cards to show
-        c = self.cardQueue.pop()
-        c.startTimer()
-        self.hadCardQueue = True
-    else:
-        if self.hadCardQueue:
-            # the undone/edited cards may be sitting in the regular queue;
-            # need to reset
-            self.mw.col.reset()
-            self.hadCardQueue = False
-        c = self.mw.col.sched.getCard()
-    self.card = c
-#   clearAudioQueue()
-    if not c:
-        self.mw.moveToState("overview")
-        return
-    if self._reps is None or self._reps % 100 == 0:
-        # we recycle the webview periodically so webkit can free memory
-        self._initWeb()
-    self._showQuestion()
 if LetSoundBleedOntoNextCard_InsteadOf_CancelingSoundEffectSometimes:
+	#already cleared the audio queue, don't do it again and lose the sound effects.
+	#but it delays the next card's sounds.
+	def nextCard(self):
+		elapsed = self.mw.col.timeboxReached()
+		if elapsed:
+			part1 = ngettext("%d card studied in", "%d cards studied in", elapsed[1]) % elapsed[1]
+			mins = int(round(elapsed[0]/60))
+			part2 = ngettext("%s minute.", "%s minutes.", mins) % mins
+			fin = _("Finish")
+			diag = askUserDialog("%s %s" % (part1, part2),
+							[_("Continue"), fin])
+			diag.setIcon(QMessageBox.Information)
+			if diag.run() == fin:
+				return self.mw.moveToState("deckBrowser")
+			self.mw.col.startTimebox()
+		if self.cardQueue:
+			# undone/edited cards to show
+			c = self.cardQueue.pop()
+			c.startTimer()
+			self.hadCardQueue = True
+		else:
+			if self.hadCardQueue:
+				# the undone/edited cards may be sitting in the regular queue;
+				# need to reset
+				self.mw.col.reset()
+				self.hadCardQueue = False
+			c = self.mw.col.sched.getCard()
+		self.card = c
+	#	clearAudioQueue()
+		if not c:
+			self.mw.moveToState("overview")
+			return
+		if self._reps is None or self._reps % 100 == 0:
+			# we recycle the webview periodically so webkit can free memory
+			self._initWeb()
+		self._showQuestion()
 	Reviewer.nextCard=nextCard
