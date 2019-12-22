@@ -40,6 +40,7 @@ user_files = os.path.join(addon_path, "user_files")
 #Reviewer._linkHandler = wrap(Reviewer._linkHandler, pageflip, "before")
 
 
+#Reviewer._answerCard = wrap(Reviewer._answerCard, function(self, ease) {
 def answersound(self, ease):
 	#add sounds for extra buttons here
 	if ease == 1:
@@ -59,12 +60,14 @@ def answersound(self, ease):
 		play(os.path.join(user_files, "easy.mp3"))
 		#preventclearingAudioQueue()
 	#add sounds for extra buttons here
+#}, "before")
 Reviewer._answerCard = wrap(Reviewer._answerCard, answersound, "before")
 
 
 if LetSoundBleedOntoNextCard_InsteadOf_CancelingSoundEffectSometimes:
 	#already cleared the audio queue, don't do it again and lose the sound effects.
 	#but it delays the next card's sounds.
+	#def Reviewer.nextCard(self):
 	def nextCard(self):
 		elapsed = self.mw.col.timeboxReached()
 		if elapsed:
