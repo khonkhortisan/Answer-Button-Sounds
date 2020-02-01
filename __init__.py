@@ -5,7 +5,7 @@ Answer Button Sounds addon for Anki 2.1 by Kyle "Khonkhortisan" Mills
 import os
 
 from aqt.reviewer import Reviewer
-from anki.hooks import wrap
+from anki import hooks
 from anki.sound import play, clearAudioQueue
 
 #don't let nextCard crash (I wish it would tell me when I'm missing includes)
@@ -37,11 +37,16 @@ user_files = os.path.join(addon_path, "user_files")
 #	#	play(os.path.join(user_files, "rip.mp3"))
 #	#	#preventclearingAudioQueue()
 #	#	error();
-#Reviewer._linkHandler = wrap(Reviewer._linkHandler, pageflip, "before")
+#Reviewer._linkHandler = hooks.wrap(Reviewer._linkHandler, pageflip, "before")
 
 
-#Reviewer._answerCard = wrap(Reviewer._answerCard, function(self, ease) {
-def answersound(self, ease):
+#Reviewer._answerCard = hooks.wrap(Reviewer._answerCard, function(self, ease) {
+#This isn't haskell, have to have different names for different numbers of arguments
+def answersound3(card, ease, early): #2.1.20+
+	answersound1(ease)
+def answersound2(self, ease): #2.1.19-
+	answersound1(ease)
+def answersound1(ease):
 	#add sounds for extra buttons here
 	if ease == 1:
 		clearAudioQueue() #force feedback to play
@@ -61,8 +66,8 @@ def answersound(self, ease):
 		#preventclearingAudioQueue()
 	#add sounds for extra buttons here
 #}, "before")
-Reviewer._answerCard = wrap(Reviewer._answerCard, answersound, "before")
-
+try:	hooks.schedv2_did_answer_review_card.append(answersound3)	#2.1.20+
+except AttributeError:	Reviewer._answerCard = hooks.wrap(Reviewer._answerCard, answersound2, "before")	#2.1.19-
 
 if LetSoundBleedOntoNextCard_InsteadOf_CancelingSoundEffectSometimes:
 	#already cleared the audio queue, don't do it again and lose the sound effects.
